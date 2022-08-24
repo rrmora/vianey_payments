@@ -1,7 +1,7 @@
 import 'package:vianey_payments/models/models.dart';
 
 class Client {
-  String? id;
+  String id;
   String name;
   String lastname;
   String? address;
@@ -12,7 +12,7 @@ class Client {
   List<Order>? orders;
   
   Client({
-    this.id,
+    required this.id,
     required this.name,
     required this.lastname,
     this.address,
@@ -57,7 +57,7 @@ class Client {
 
    static Client fromMap(Map<String, dynamic> map) {
     return Client(
-      id: map['id'],
+      id: map.containsKey('id') ? map['id'] : '*',
       name: map['name'],
       lastname: map['lastname'],
       balance: map['balance'].toDouble(),

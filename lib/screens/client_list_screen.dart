@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_this
-
 import 'package:flutter/material.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/services/clients_service.dart';
@@ -35,9 +33,9 @@ class _ClientListScreenState extends State<ClientListScreen> {
     final clientsService = Provider.of<ClientsService>(context);
     
     if( clientsService.isLoading ) return const Loading();
-    this.clientsList = clientsService.clients;
+    clientsList = clientsService.clients;
     if (cont == 0) {
-     this.auxClients = clientsList;
+     auxClients = clientsList;
     }
     cont++; 
 
@@ -54,9 +52,9 @@ class _ClientListScreenState extends State<ClientListScreen> {
           icon:  customIcon,
           onPressed: () {
             setState(() {
-              if (this.customIcon.icon == Icons.search) {
-                this.customIcon = const Icon(Icons.cancel);
-                this.customText = TextField(
+              if (customIcon.icon == Icons.search) {
+                customIcon = const Icon(Icons.cancel);
+                customText = TextField(
                   textInputAction: TextInputAction.go,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -69,10 +67,10 @@ class _ClientListScreenState extends State<ClientListScreen> {
                   }
                 );
               } else {
-                this.customIcon = const Icon(Icons.search);
-                this.customText = const Text('Clientes');
+                customIcon = const Icon(Icons.search);
+                customText = const Text('Clientes');
                 setState(() {
-                  this.auxClients = this.clientsList;
+                  auxClients = clientsList;
                 });
               }
             });
@@ -80,8 +78,8 @@ class _ClientListScreenState extends State<ClientListScreen> {
         ],
         title: customText
       ),
-      body: this.auxClients.isEmpty ? const CardNoContent() :
-      _clientListTable(context, this.auxClients),
+      body: auxClients.isEmpty ? const CardNoContent() :
+      _clientListTable(context, auxClients),
       floatingActionButton: _floatingActionButton(context),
    );
   }
@@ -103,12 +101,12 @@ class _ClientListScreenState extends State<ClientListScreen> {
                   DataColumn(label: Text('Saldo', style: TextStyle(fontSize: 17))),
                 ],
                 rows:
-                  this.auxClients.map<DataRow>((e) => DataRow(
+                  auxClients.map<DataRow>((e) => DataRow(
                     onSelectChanged: (b) {
                       Navigator.pushNamed(context, 'clientDetail', arguments: e);
                     },
                     cells: [
-                      DataCell(const Icon(Icons.edit, color: Colors.grey, size: 27), onTap: () => {Navigator.pushNamed(context, 'client')},),
+                      DataCell(const Icon(Icons.edit, color: Colors.grey, size: 27), onTap: () => {Navigator.pushNamed(context, 'client', arguments: e)},),
                       DataCell(Text('${e.name} ${e.lastname}', style: const TextStyle(fontSize: 15))),
                       DataCell(Text(e.phone.toString(), style: const TextStyle(fontSize: 15))),
                       DataCell(Text('\$${e.balance.toStringAsFixed(2)}', style: const TextStyle(fontSize: 15))),
@@ -123,7 +121,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
 
   _floatingActionButton(context) {
     return FloatingActionButton(
-      onPressed: () => Navigator.popAndPushNamed(context, 'client'),
+      onPressed: () => Navigator.popAndPushNamed(context, 'client', arguments: Client(id: '*', name: '', lastname: '', balance: 0, phone: '', status: '')),
       tooltip: 'Increment',
       child: const Icon(Icons.add)
     );
@@ -131,7 +129,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
 
   _findClient(String value) {
     setState(() {
-      this.auxClients = this.clientsList.where((client) => 
+      auxClients = clientsList.where((client) => 
       client.name.toLowerCase().contains(value.toLowerCase()) || 
       client.lastname.toLowerCase().contains(value.toLowerCase()) || 
       client.phone.toLowerCase().contains(value.toLowerCase())
