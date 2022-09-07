@@ -35,22 +35,28 @@ class _OrdersListState extends State<OrderList> {
         children: widget.client.orders!.map<ExpansionPanel>((Order item) {
           return ExpansionPanel(
             headerBuilder: (BuildContext context, bool isExpanded) {
-              return const ListTile(
-                title: Text('Total: \$0.00',
+              return ListTile(
+                title: Text('Total: ${item.total.toString()}',
                     style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
               );
             },
             body: Stack(children: [
               ListTile(
-                  title: Text('Fecha: ${item.orderDate}',
-                      style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold)),
-                  subtitle: Text('Comentario: ${item.comment}',
-                      style:
-                          const TextStyle(color: Colors.black54, fontSize: 15)),
+                  title: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Text('Fecha del pedido: ${item.orderDate}',
+                        style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Text('Comentario: ${item.comment}',
+                        style:
+                            const TextStyle(color: Colors.black54, fontSize: 15)),
+                  ),
                   trailing: const Icon(Icons.edit, size: 30),
                   onTap: () {
                     setState(() {

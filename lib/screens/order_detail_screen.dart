@@ -114,6 +114,7 @@ class _OrderScreenState extends StatelessWidget {
                               initialValue: order?.comment,
                               autocorrect: false,
                               keyboardType: TextInputType.text,
+                              maxLines: 2,
                               onChanged: (value) => orderF?.comment = value,
                               // ignore: body_might_complete_normally_nullable
                               validator: (value) {
@@ -182,7 +183,7 @@ class _OrderScreenState extends StatelessWidget {
                                   }
                                   createUpdate
                                       ? await clientService.save(client)
-                                      : await clientService.save(client);
+                                      : await clientService.update(client);
                                   // ignore: use_build_context_synchronously
                                   Navigator.pushNamed(context, 'clientDetail',
                                       arguments: client);
