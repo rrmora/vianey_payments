@@ -1,34 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vianey_payments/controls/input_control.dart';
 import 'package:vianey_payments/models/clients.dart';
+import 'package:vianey_payments/providers/client_form_provider.dart';
+import 'package:vianey_payments/services/clients_service.dart';
 
-class ClientScreen extends StatefulWidget {
+class ClientScreen extends StatelessWidget {
   const ClientScreen({Key? key}) : super(key: key);
 
-  @override
-  State<ClientScreen> createState() => _ClientScreenState();
-}
 
-class _ClientScreenState extends State<ClientScreen> {
   @override
   Widget build(BuildContext context) {
+
+    final clientsService = Provider.of<ClientsService>(context);
+    final client = ModalRoute.of(context)!.settings.arguments as Client;
+
+    return ChangeNotifierProvider(
+      create: (_) => ClientFormProvider(client),
+      child: _ClientScreenState(clientService: clientsService)
+    );
+  }
+}
+
+class _ClientScreenState extends StatelessWidget {
+  const _ClientScreenState({Key? key, required this.clientService}) : super(key: key);
+
+  final ClientsService clientService;
+
+  @override
+  Widget build(BuildContext context) {
+    final clientForm = Provider.of<ClientFormProvider>(context);
+    final clientF = clientForm.client;
+
     final client = ModalRoute.of(context)!.settings.arguments as Client;
     final titleHeader = client.id.contains('*') ? 'Agregar cliente' : 'Actualizar cliente';
     final titleBtn = client.id.contains('*') ? 'Agregar' : 'Actualizar';
     return Scaffold(
       appBar: AppBar(
         title: Text(titleHeader),
-        // actions: [IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.popAndPushNamed(context, 'clientsList');
-        //   })],
+        actions: [IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.popAndPushNamed(context, 'clientsList');
+          })],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 50),
         children: [ Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
           child: Form(
+            key: clientForm.formKey,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: Column(                
@@ -44,30 +66,18 @@ class _ClientScreenState extends State<ClientScreen> {
                     initialValue: client.name,
                     autocorrect: false,
                     keyboardType: TextInputType.name,
+                    onChanged: ( value ) => clientF?.name = value,
+                    // ignore: body_might_complete_normally_nullable
+                    validator: ( value ) {
+                      if ( value == null || value.isEmpty ) {
+                        return 'El nombre es obligatorio'; 
+                      }
+                    },
                     decoration: InputControl.authInputDecoration(
                       hintText: 'Nombre',
                       labelText: 'Nombre',
                       prefixIcon: Icons.person
-                    ),
-              // onChanged: ( value ) => loginForm.email = value,
-              // validator: ( value ) {
-
-              //     String pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-              //     RegExp regExp  = new RegExp(pattern);
-                  
-              //     return regExp.hasMatch(value ?? '')
-              //       ? null
-              //       : 'El valor ingresado no luce como un correo';
-
-              // },
-            
-                  // decoration: const InputDecoration(  
-                  //   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.indigo)),
-                  //   labelStyle:   TextStyle(color: Colors.black87),
-                  //   icon: const Icon(Icons.person, color: Colors.indigo),  
-                  //   hintText: 'Nombre',  
-                  //   labelText: 'Nombre',  
-                  // ),  
+                    ), 
                 ), 
                 const SizedBox( height: 10 ),
                 TextFormField(  
@@ -78,14 +88,7 @@ class _ClientScreenState extends State<ClientScreen> {
                     hintText: 'Apellido',
                     labelText: 'Apellido',
                     prefixIcon: Icons.person
-                  ),
-                  // decoration: const InputDecoration(  
-                  //   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.indigo)),
-                  //   labelStyle:   TextStyle(color: Colors.black87),
-                  //   icon: const Icon(Icons.person, color: Colors.indigo),  
-                  //   hintText: 'Apellido',  
-                  //   labelText: 'Apellido',  
-                  // ),  
+                  ), 
                 ),
                 const SizedBox( height: 10 ),
                 TextFormField(  
@@ -96,32 +99,31 @@ class _ClientScreenState extends State<ClientScreen> {
                     hintText: 'Dirección',
                     labelText: 'Dirección',
                     prefixIcon: Icons.home
-                  ),
-                  // decoration: const InputDecoration(  
-                  //   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.indigo)),
-                  //   labelStyle:   TextStyle(color: Colors.black87),
-                  //   icon: const Icon(Icons.home, color: Colors.indigo),   
-                  //   hintText: 'Dirección',  
-                  //   labelText: 'Dirección',  
-                  // ),  
+                  ), 
                 ),
                 const SizedBox( height: 10 ),
                 TextFormField(  
                   initialValue: client.phone,
                   autocorrect: false,
                   keyboardType: TextInputType.phone,
+                  onChanged: ( value ) => clientF?.phone = value,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  ],
+                  // ignore: body_might_complete_normally_nullable
+                  validator: ( value ) {
+                      if ( value == null || value.isEmpty ) {
+                        return 'El Teléfono es obligatorio'; 
+                      }
+                      if (value.length < 10 || value.length > 10) {
+                        return 'El Teléfono debe tener 10 caracteres';
+                      }
+                    },
                   decoration: InputControl.authInputDecoration(
                     hintText: 'Teléfono',
                     labelText: 'Teléfono',
                     prefixIcon: Icons.phone
-                  ),
-                  // decoration: const InputDecoration(  
-                  //   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.indigo)),
-                  //   labelStyle:   TextStyle(color: Colors.black87),
-                  //   icon: const Icon(Icons.phone, color: Colors.indigo),  
-                  //   hintText: 'Teléfono',  
-                  //   labelText: 'Teléfono',  
-                  // ),  
+                  ), 
                 ), 
                  Center(  
                     child: Padding(
@@ -138,7 +140,10 @@ class _ClientScreenState extends State<ClientScreen> {
                             style: const TextStyle( color: Colors.white ),
                           )
                         ),
-                        onPressed: () {}
+                        onPressed: () async {
+                          if (!clientForm.isValidForm()) return;
+                          await clientService.save(client); 
+                        }
                       ),
                     )
                     )

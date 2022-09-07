@@ -47,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                 overlayColor: MaterialStateProperty.all(Colors.indigo.withOpacity(0.1)),
                 shape: MaterialStateProperty.all(const StadiumBorder())
               ),
-              child: const Text('Crear una cuenta', style: TextStyle(fontSize: 18, color: Colors.black87),)
+              child: const Text('', style: TextStyle(fontSize: 18, color: Colors.black87),)
               ),
               const SizedBox( height: 50 ),
             ],
@@ -146,7 +146,7 @@ class _LoginForm extends StatelessWidget {
               padding: const EdgeInsets.symmetric( horizontal: 80, vertical: 15),
               child: Text(
                 loginForm.isLoading 
-                  ? 'Espere'
+                  ? 'iniciando sesión'
                   : 'Ingresar',
                 style: const TextStyle( color: Colors.white ),
               )

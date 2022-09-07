@@ -10,9 +10,10 @@ class ClientsService extends ChangeNotifier {
   
   final String _baseUrl = 'pagos-vianey-default-rtdb.firebaseio.com';
   final List<Client> clients = [];
-  late Client selectedClient;
+  Client? selectedClient;
 
    bool isLoading = true;
+   bool isSaving = false;
 
   ClientsService() {
     loadClients();
@@ -41,5 +42,13 @@ class ClientsService extends ChangeNotifier {
     notifyListeners();
 
     return clients;
+  }
+
+  Future save(Client client) async {
+    isSaving = true;
+    ChangeNotifier();
+    print(client);
+    isSaving = false;
+    ChangeNotifier();
   }
 }
