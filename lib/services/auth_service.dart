@@ -7,7 +7,7 @@ class AuthService extends ChangeNotifier {
   final String _baseUrl = 'identitytoolkit.googleapis.com';
   final String _firebaseToken = 'AIzaSyBBRFN8kXjvJ7WbU_ACmPGkD75qhdfTs2w';
   final storage = const FlutterSecureStorage();
-  
+
   Future<String?> createUser(String email, String password) async {
     final Map<String, dynamic> authData = {
       'email': email,
@@ -15,9 +15,8 @@ class AuthService extends ChangeNotifier {
       'returnSecureToken': true,
     };
 
-    final url = Uri.https(_baseUrl, '/v1/accounts:signUp', {
-      'key': _firebaseToken
-    });
+    final url =
+        Uri.https(_baseUrl, '/v1/accounts:signUp', {'key': _firebaseToken});
 
     final response = await http.post(url, body: json.encode(authData));
     final Map<String, dynamic> decodeResponse = json.decode(response.body);
@@ -30,19 +29,17 @@ class AuthService extends ChangeNotifier {
     } else {
       return decodeResponse['error']['message'];
     }
-
   }
 
-    Future<String?> login(String email, String password) async {
+  Future<String?> login(String email, String password) async {
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
       'returnSecureToken': true,
     };
 
-    final url = Uri.https(_baseUrl, '/v1/accounts:signInWithPassword', {
-      'key': _firebaseToken
-    });
+    final url = Uri.https(
+        _baseUrl, '/v1/accounts:signInWithPassword', {'key': _firebaseToken});
 
     final response = await http.post(url, body: json.encode(authData));
     final Map<String, dynamic> decodeResponse = json.decode(response.body);
@@ -55,7 +52,6 @@ class AuthService extends ChangeNotifier {
     } else {
       return decodeResponse['error']['message'];
     }
-
   }
 
   Future logout() async {
@@ -66,5 +62,4 @@ class AuthService extends ChangeNotifier {
   Future<String> readToken() async {
     return await storage.read(key: 'token') ?? '';
   }
-
 }

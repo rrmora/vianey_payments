@@ -156,7 +156,7 @@ class _OrderScreenState extends StatelessWidget {
                                   prefixIcon: Icons.monetization_on)),
                           const SizedBox(height: 10),
                           Center(
-                            child: Padding(
+                              child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
                             child: MaterialButton(
                                 shape: RoundedRectangleBorder(
@@ -180,21 +180,18 @@ class _OrderScreenState extends StatelessWidget {
                                     order?.orderStatus = 'pedido';
                                     client.orders?.insert(index, order!);
                                   }
-                                  createUpdate ? 
-                                  await clientService.save(client) : 
-                                  await clientService.save(client);
+                                  createUpdate
+                                      ? await clientService.save(client)
+                                      : await clientService.save(client);
                                   // ignore: use_build_context_synchronously
-                                  Navigator.pushNamed(context, 'clientDetail', arguments: client);
-                                }
-                              ),
-                            )
-                          )
+                                  Navigator.pushNamed(context, 'clientDetail',
+                                      arguments: client);
+                                }),
+                          ))
                         ],
                       ),
-                    )
-                ),
+                    )),
               )
-            ])
-        );
+            ]));
   }
 }

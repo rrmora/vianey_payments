@@ -4,9 +4,5 @@ class OrderCustom {
   Order? order;
   Client? client;
 
-  OrderCustom({
-    this.order,
-    this.client
-  });
-
+  OrderCustom({this.order, this.client});
 }
