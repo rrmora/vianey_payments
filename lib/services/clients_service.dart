@@ -40,18 +40,20 @@ class ClientsService extends ChangeNotifier {
     return clients;
   }
 
-  Future save(Client client) async {
+  Future save(Client client, bool isNewClient) async {
+    
     isSaving = true;
     notifyListeners();
-    print(client);
+    print(client.toJson());
     isSaving = false;
     notifyListeners();
   }
 
   Future update(Client client) async {
     isSaving = true;
+    print('object');
     notifyListeners();
-    print(client);
+    print(client.toJson());
     isSaving = false;
     notifyListeners();
   }

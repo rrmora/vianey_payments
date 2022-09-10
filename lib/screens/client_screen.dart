@@ -35,6 +35,7 @@ class _ClientScreenState extends StatelessWidget {
     final titleHeader =
         client.id.contains('*') ? 'Agregar cliente' : 'Actualizar cliente';
     final titleBtn = client.id.contains('*') ? 'Agregar' : 'Actualizar';
+    final createUpdate = client.id.contains('*') ? true : false;
     return Scaffold(
         appBar: AppBar(
           title: Text(titleHeader),
@@ -152,7 +153,13 @@ class _ClientScreenState extends StatelessWidget {
                                     )),
                                 onPressed: () async {
                                   if (!clientForm.isValidForm()) return;
-                                  await clientService.save(client);
+
+                                  createUpdate ?
+                                  await clientService.save(client, true) :
+                                  await clientService.update(client);
+
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.popAndPushNamed(context, 'clientsList');
                                 }),
                           ))
                         ],

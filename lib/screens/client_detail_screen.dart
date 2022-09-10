@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
 
@@ -10,6 +11,7 @@ class ClientDetailScreen extends StatefulWidget {
 }
 
 class _ClientDetailScreenState extends State<ClientDetailScreen> {
+  final formatter  = NumberFormat.currency(locale: 'es_MX', decimalDigits: 2, name: '');
   final ClientCustom clientCustom = ClientCustom();
   final PageController _pageController = PageController(initialPage: 0);
   int _currentIndex = 0;
@@ -21,8 +23,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     client.payments = client.payments ?? (client.payments = []);
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-              '${client.name} - Balance: \$${client.balance.toStringAsFixed(2)}')),
+          title: Text('${client.name} - Balance: \$${ formatter.format(client.balance) }')), // client.balance.toStringAsFixed(2)}')),
       body: _pageViewWidget(client),
       floatingActionButton: _floatingActionButton(client),
       bottomNavigationBar: _bottomNavigation(),
@@ -42,13 +43,13 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         },
         children: [
           OrderList(client: client),
-          // PaymentsList(payments: client.payments == null ? null : client.payments),
+          PaymentsList(client: client, clientCustom: clientCustom),
         ]);
   }
 
   _floatingActionButton(client) {
     return Visibility(
-        visible: !(_currentIndex == 1 && client.orders == null),
+        visible: !(_currentIndex == 1 && client.orders.length == 0),
         child: FloatingActionButton(
           onPressed: () => {
             if (_currentIndex == 0)
@@ -59,7 +60,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
             else
               {
                 Navigator.popAndPushNamed(context, 'paymentDetail',
-                    arguments: client)
+                    arguments: clientCustom)
               }
           },
           child: const Icon(Icons.add),

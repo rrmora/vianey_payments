@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/services/clients_service.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
@@ -81,6 +82,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
   }
 
   _clientListTable(context, clientsService) {
+    final formatter  = NumberFormat.currency(locale: 'es_MX', decimalDigits: 2, name: '');
     return ListView(
       children: [
         Card(
@@ -90,7 +92,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
             width: double.infinity,
             child: DataTable(
                 showCheckboxColumn: false,
-                columnSpacing: 30.0,
+                columnSpacing: 15.0,
                 columns: const [
                   DataColumn(label: Text('')),
                   DataColumn(
@@ -119,7 +121,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
                                   style: const TextStyle(fontSize: 15))),
                               DataCell(Text(e.phone.toString(),
                                   style: const TextStyle(fontSize: 15))),
-                              DataCell(Text('\$${e.balance.toStringAsFixed(2)}',
+                              DataCell(Text('\$${ formatter.format(e.balance) }',// e.balance.toStringAsFixed(2)}',
                                   style: const TextStyle(fontSize: 15))),
                             ]))
                     .toList()),

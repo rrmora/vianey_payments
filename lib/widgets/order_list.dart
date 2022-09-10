@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
 
@@ -24,6 +25,7 @@ class _OrdersListState extends State<OrderList> {
   }
 
   _orderList() {
+    final formatter  = NumberFormat.currency(locale: 'es_MX', decimalDigits: 2, name: '');
     return Padding(
       padding: const EdgeInsets.all(7.0),
       child: ExpansionPanelList(
@@ -36,16 +38,16 @@ class _OrdersListState extends State<OrderList> {
           return ExpansionPanel(
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
-                title: Text('Total: ${item.total.toString()}',
+                title: Text('Total en está orden: \$${ formatter.format(item.total) }',
                     style:
-                        const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               );
             },
             body: Stack(children: [
               ListTile(
                   title: Padding(
                     padding: const EdgeInsets.all(5),
-                    child: Text('Fecha del pedido: ${item.orderDate}',
+                    child: Text('Fecha de orden: ${item.orderDate}',
                         style: const TextStyle(
                             color: Colors.black87,
                             fontSize: 15,

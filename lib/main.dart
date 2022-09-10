@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         'clientsList': (_) => const ClientListScreen(),
         'clientDetail': (_) => const ClientDetailScreen(),
         'orderDetail': (_) => const OrderDetailScreen(),
-        // 'paymentDetail' : ( _ ) => PaymentDetailScreen(),
+        'paymentDetail' : ( _ ) => const PaymentDetailScreen(),
         // 'product' : ( _ ) => ProductScreen(),
         // 'productDetail' : ( _ ) => ProductDetailScreen(),
         // 'register'   : ( _ ) => RegisterScreen(),

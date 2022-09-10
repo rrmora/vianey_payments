@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:vianey_payments/models/models.dart';
 
 class Client {
@@ -21,6 +23,8 @@ class Client {
       required this.status,
       this.payments,
       this.orders});
+
+  String toJson() => json.encode(toMap());
 
   factory Client.fromJson(dynamic json) {
     final paymentList = json['payments'] as List;
