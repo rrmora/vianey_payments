@@ -64,6 +64,7 @@ class _OrderScreenState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter  = NumberFormat.currency(locale: 'es_MX', decimalDigits: 2, name: '');
     final orderForm = Provider.of<OrderFormProvider>(context);
     final orderF = orderForm.order;
     var now = DateTime.now();
@@ -130,18 +131,18 @@ class _OrderScreenState extends StatelessWidget {
                               // ignore: body_might_complete_normally_nullable
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Comentario es obligatorio';
+                                  return 'Descripción es obligatorio';
                                 }
                               },
                               decoration: InputControl.authInputDecoration(
-                                  hintText: 'Comentario',
-                                  labelText: 'Comentario',
+                                  hintText: 'Descripción',
+                                  labelText: 'Descripción',
                                   prefixIcon: Icons.comment)),
                           const SizedBox(height: 10),
                           TextFormField(
                               // ignore: unrelated_type_equality_checks
                               initialValue:
-                                  '\$${order?.total ?? (order?.total = 0)}',
+                                  '\$${order?.total ?? (formatter.format(order?.total = 0))}',
                               // enabled: false,
                               keyboardType: TextInputType.number,
                               inputFormatters: [

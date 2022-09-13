@@ -63,6 +63,7 @@ class _PaymentScreenState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter  = NumberFormat.currency(locale: 'es_MX', decimalDigits: 2, name: '');
     final paymentForm = Provider.of<PaymentFormProvider>(context);
     final paymentF = paymentForm.payment;
     var now = DateTime.now();
@@ -155,7 +156,7 @@ class _PaymentScreenState extends StatelessWidget {
                           TextFormField(
                               // ignore: unrelated_type_equality_checks
                               initialValue:
-                                  '\$${payment?.balance ?? (payment?.balance = 0)}',
+                                  '\$${payment?.balance ?? (formatter.format(payment?.balance = 0))}',
                               // enabled: false,
                               keyboardType: TextInputType.number,
                               enabled: false,
