@@ -86,6 +86,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
     return ListView(
       children: [
         Card(
+          color: const Color.fromARGB(118, 35, 109, 100),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
           child: SizedBox(
@@ -111,13 +112,13 @@ class _ClientListScreenState extends State<ClientListScreen> {
                             cells: [
                               DataCell(
                                 const Icon(Icons.edit,
-                                    color: Colors.grey, size: 27),
+                                    color: Colors.black45, size: 27),
                                 onTap: () => {
                                   Navigator.pushNamed(context, 'client',
                                       arguments: e)
                                 },
                               ),
-                              DataCell(Text('${e.name} ${e.lastname}',
+                              DataCell(Text(_cutString('${e.name} ${e.lastname}', 14),
                                   style: const TextStyle(fontSize: 15))),
                               DataCell(Text(e.phone.toString(),
                                   style: const TextStyle(fontSize: 15))),
@@ -155,5 +156,10 @@ class _ClientListScreenState extends State<ClientListScreen> {
           .toList();
       debugPrint(auxClients.length.toString());
     });
+  }
+
+  _cutString(String value, int length) {
+    var res = value.length > 11 ? '${value.substring(0, length)}...' : value;
+    return res;
   }
 }

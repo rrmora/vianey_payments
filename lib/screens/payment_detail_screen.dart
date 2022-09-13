@@ -158,6 +158,7 @@ class _PaymentScreenState extends StatelessWidget {
                                   '\$${payment?.balance ?? (payment?.balance = 0)}',
                               // enabled: false,
                               keyboardType: TextInputType.number,
+                              enabled: false,
                               inputFormatters: [
                                 //FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
                                 CurrencyTextInputFormatter(

@@ -23,7 +23,28 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     client.payments = client.payments ?? (client.payments = []);
     return Scaffold(
       appBar: AppBar(
-          title: Text('${client.name} - Balance: \$${ formatter.format(client.balance) }')), // client.balance.toStringAsFixed(2)}')),
+          title: Row(  
+          mainAxisAlignment: MainAxisAlignment.start,  
+          children:<Widget>[   
+            Container(  
+              margin: const EdgeInsets.all(1.0),  
+              padding: const EdgeInsets.all(1.0),  
+              child: Text(_cutString(client.name, 11) ,style: const TextStyle(fontSize: 20.0)),  
+            ),  
+            Container(  
+              margin: const EdgeInsets.only(left: 10.0, top: 2.0),  
+              padding: const EdgeInsets.all(2.0),   
+              child: const Text("Balance",style: TextStyle(fontSize: 18.0)),  
+            ),
+            Container(  
+              margin: const EdgeInsets.only(left: 1.0, top: 2.0),  
+              padding: const EdgeInsets.all(2.0),  
+              child:  Text('\$${ formatter.format(client.balance) }', style: const TextStyle(fontSize: 18.0, color:Color.fromARGB(255, 235, 61, 48))),  
+            )
+          ]  
+      ),  
+          // title: Text('${client.name} - Balance: \$${ formatter.format(client.balance) }')
+      ), // client.balance.toStringAsFixed(2)}')),
       body: _pageViewWidget(client),
       floatingActionButton: _floatingActionButton(client),
       bottomNavigationBar: _bottomNavigation(),
@@ -49,7 +70,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
 
   _floatingActionButton(client) {
     return Visibility(
-        visible: !(_currentIndex == 1 && client.orders.length == 0),
+        visible: !(_currentIndex == 1 && (client.orders.length == 0 || client.balance == 0)),
         child: FloatingActionButton(
           onPressed: () => {
             if (_currentIndex == 0)
@@ -87,5 +108,10 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
           _pageController.animateToPage(index,
               duration: const Duration(milliseconds: 500), curve: Curves.ease);
         });
+  }
+
+  _cutString(String value, int length) {
+    var res = value.length > 11 ? '${value.substring(0, length)}...' : value;
+    return res;
   }
 }

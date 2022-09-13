@@ -5,6 +5,7 @@ class Order {
       {this.id,
       required this.orderDate,
       required this.orderStatus,
+      required this.orderType,
       required this.total,
       required this.comment,
       required this.isExpanded});
@@ -12,6 +13,7 @@ class Order {
   String? id;
   String orderDate;
   String orderStatus;
+  String orderType;
   double total;
   String comment;
   bool isExpanded = false;
@@ -23,6 +25,7 @@ class Order {
   factory Order.fromMap(Map<String, dynamic> json) => Order(
       orderDate: json["order_date"],
       orderStatus: json["order_status"],
+      orderType: json["order_type"],
       total: json["total"].toDouble(),
       comment: json["comment"],
       isExpanded: false);
@@ -38,6 +41,7 @@ class Order {
       id: id,
       orderDate: orderDate,
       orderStatus: orderStatus,
+      orderType: orderType,
       total: total,
       comment: comment,
       isExpanded: false);

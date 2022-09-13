@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:group_button/group_button.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/controls/input_control.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
@@ -21,6 +22,7 @@ class OrderDetailScreen extends StatelessWidget {
         ? Order(
             orderDate: '',
             orderStatus: '',
+            orderType: '',
             total: 0,
             comment: '',
             isExpanded: false)
@@ -65,6 +67,8 @@ class _OrderScreenState extends StatelessWidget {
     final orderForm = Provider.of<OrderFormProvider>(context);
     final orderF = orderForm.order;
     var now = DateTime.now();
+    var hasStatus = false;
+    var hasType = false;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -108,6 +112,7 @@ class _OrderScreenState extends StatelessWidget {
                                 : (order?.orderDate =
                                     DateFormat('dd/MM/yyyy').format(now)),
                             autocorrect: false,
+                            enabled: false,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputControl.authInputDecoration(
                                 hintText: 'Fecha',
@@ -163,6 +168,79 @@ class _OrderScreenState extends StatelessWidget {
                                   labelText: 'Total de está orden',
                                   prefixIcon: Icons.monetization_on)),
                           const SizedBox(height: 10),
+                          const Text('Tipo de pago:', style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15.0)),
+                          const SizedBox(height: 8),
+                          Center(
+                            child: GroupButton(
+                                spacing: 5,
+                                isRadio: true,
+                                direction: Axis.horizontal,
+                                onSelected: (index, isSelected) => {
+                                  hasType = true,
+                                  index == 0 ? orderF?.orderType = 'credito' : orderF?.orderType = 'contado',
+                                },
+                                buttons: const ["Crédito","Contado"],
+                                selectedButton: order?.orderType != null && order?.orderType != "" ? 
+                                (order?.orderType == 'credito' ? 0 : 1 ) : 1,
+                                // selectedButtons: const [0, 1], /// [List<int>] after 2.2.1 version 
+                                selectedTextStyle: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(118, 35, 109, 1),
+                                ),
+                                unselectedTextStyle: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                ),
+                                selectedColor: Colors.white,
+                                unselectedColor: Colors.grey[300],
+                                selectedBorderColor: const Color.fromRGBO(118, 35, 109, 1),
+                                unselectedBorderColor: Colors.grey[500],
+                                borderRadius: BorderRadius.circular(5.0),
+                                selectedShadow: const <BoxShadow>[BoxShadow(color: Colors.transparent)],
+                                unselectedShadow: const <BoxShadow>[BoxShadow(color: Colors.transparent)],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          const Text('Estatus de orden:', style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15.0)),
+                          const SizedBox(height: 8),
+                          Center(
+                            child: GroupButton(
+                                spacing: 5,
+                                isRadio: true,
+                                direction: Axis.horizontal,
+                                onSelected: (index, isSelected) =>{
+                                  hasStatus = true,
+                                  index == 0 ? orderF?.orderStatus = 'pedido'  : index == 1 ? orderF?.orderStatus = 'entregado' : orderF?.orderStatus = 'cancelado',
+                                },
+                                buttons: const ["Pedido","Entregado","Cancelado"],
+                                selectedButton: order?.orderStatus != null && order?.orderStatus != "" ? (order?.orderStatus == 'pedido' ? 0  : order?.orderStatus == 'entregado' ? 1 : 2) : 0,
+                                // selectedButtons: const [0, 1], /// [List<int>] after 2.2.1 version 
+                                selectedTextStyle: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(118, 35, 109, 1),
+                                ),
+                                unselectedTextStyle: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                ),
+                                selectedColor: Colors.white,
+                                unselectedColor: Colors.grey[300],
+                                selectedBorderColor: const Color.fromRGBO(118, 35, 109, 1),
+                                unselectedBorderColor: Colors.grey[500],
+                                borderRadius: BorderRadius.circular(5.0),
+                                selectedShadow: const <BoxShadow>[BoxShadow(color: Colors.transparent)],
+                                unselectedShadow: const <BoxShadow>[BoxShadow(color: Colors.transparent)],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
                           Center(
                               child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 15),
@@ -185,7 +263,12 @@ class _OrderScreenState extends StatelessWidget {
                                   if (order?.id == null) {
                                     const index = 0;
                                     order?.id = '${client.id}-order';
-                                    order?.orderStatus = 'pedido';
+                                    if (!hasType) {
+                                      order?.orderType = 'contado';
+                                    }
+                                    if (!hasStatus) {
+                                      order?.orderStatus = 'pedido';
+                                    }
                                     client.balance = (client.balance + order!.total);
                                     client.orders?.insert(index, order!);
                                   }

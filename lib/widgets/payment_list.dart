@@ -22,6 +22,7 @@ class PaymentsList extends StatelessWidget {
     return ListView(
           children: [ 
               Card(
+                color: const Color.fromARGB(118, 35, 109, 100),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
                 child: DataTable( 
                 showCheckboxColumn: false,
