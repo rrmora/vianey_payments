@@ -209,7 +209,7 @@ class _PaymentScreenState extends StatelessWidget {
                                     payment!.balance = client.balance;
                                     client.payments?.insert(index, payment!);
                                   }
-                                  createUpdate
+                                  client.id.contains('*')
                                       ? await clientService.save(client, false)
                                       : await clientService.update(client);
                                   // ignore: use_build_context_synchronously

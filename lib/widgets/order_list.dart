@@ -81,7 +81,7 @@ class _OrdersListState extends State<OrderList> {
                       print(item);
                       final res = widget.client;
                       clientCustom.client = res;
-                      clientCustom.id = item.id;
+                      clientCustom.id = item.tempId;
                       Navigator.popAndPushNamed(context, 'orderDetail',
                           arguments: clientCustom);
                     });

@@ -27,7 +27,7 @@ class ClientsService extends ChangeNotifier {
     final resp = await http.get(url);
 
     final Map<String, dynamic> clientsMap = json.decode(resp.body);
-
+    print(clientsMap);
     clientsMap.forEach((key, value) {
       final tempClient = Client.fromMap(value);
       tempClient.id = key;
@@ -42,19 +42,48 @@ class ClientsService extends ChangeNotifier {
 
   Future save(Client client, bool isNewClient) async {
     
+    client.orders = [];
+    client.payments = [];
+    final url = Uri.https( _baseUrl, 'clients.json', {
+      'auth': await storage.read(key: 'token') ?? ''
+    });
     isSaving = true;
-    notifyListeners();
-    print(client.toJson());
+    final clientJ = client.toJson();
+    print(clientJ);
+    final response = await http.post(url, body: clientJ);
+
+    final decodedData = json.decode(response.body);
+
+    print(decodedData);
+    // loadClients();
+    // notifyListeners();
     isSaving = false;
-    notifyListeners();
+    if ( response.statusCode != 200 && response.statusCode != 201 ) {
+      print('algo salio mal');
+      print( response.body );
+      return null;
+    }
   }
 
   Future update(Client client) async {
+    final url = Uri.https( _baseUrl, 'clients/${ client.id }.json', {
+      'auth': await storage.read(key: 'token') ?? ''
+    });
     isSaving = true;
-    print('object');
-    notifyListeners();
+    // client.orders = client.orders!.map((r) => r.toJson() ).cast<Order>().toList();
+    print(json.encode(client.toJson()));
+    final response = await http.put(url, body: client.toJson());
+
+    json.decode(response.body);
+
     print(client.toJson());
+    // loadClients();
+    // notifyListeners();
     isSaving = false;
-    notifyListeners();
+    if ( response.statusCode != 200 && response.statusCode != 201 ) {
+      print('algo salio mal');
+      print( response.body );
+      return null;
+    }
   }
 }

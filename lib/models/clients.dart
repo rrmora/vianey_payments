@@ -29,9 +29,12 @@ class Client {
   factory Client.fromJson(dynamic json) {
     final paymentList = json['payments'] as List;
     List<Payment> payments =
-        paymentList.map((i) => Payment.fromJson(i)).toList();
+        paymentList.isNotEmpty ?
+        paymentList.map((i) => Payment.fromJson(i)).toList() : [];
     final orderList = json['orders'] as List;
-    List<Order> orders = orderList.map((i) => Order.fromJson(i)).toList();
+    List<Order> orders = 
+      orderList.isNotEmpty ?
+      orderList.map((i) => Order.fromJson(i)).toList() : [];
 
     return Client(
       id: json['id'] as String,
@@ -55,7 +58,7 @@ class Client {
         "status": status,
         'payment':
             payments?.map((payment) => payment.toMap()).toList(growable: false),
-        'orders': orders?.map((order) => order.toMap()).toList(growable: false),
+        'orders': orders?.map((order) => order.toMap()).toList(growable: true),
       };
 
   static Client fromMap(Map<String, dynamic> map) {
@@ -68,8 +71,8 @@ class Client {
         phone: map['phone'].toString(),
         status: map['status'],
         payments:
-            map.containsKey('payments') ? paymentList(map['payments']) : null,
-        orders: map.containsKey('orders') ? orderList(map['orders']) : null);
+            map.containsKey('payments') ? paymentList(map['payments']) : [],
+        orders: map.containsKey('orders') ? List<Order>.from(map['orders'].map((o) => Order.fromJson(o))) : []);// orderList(map['orders']) : []);
   }
 
   static List<Payment> paymentList(Map<String, dynamic> map) {
@@ -82,15 +85,15 @@ class Client {
     return payments;
   }
 
-  static List<Order> orderList(Map<String, dynamic> map) {
-    final List<Order> orders = [];
-    map.forEach((key, value) {
-      final tempClient = Order.fromMap(value);
-      tempClient.id = key;
-      orders.add(tempClient);
-    });
-    return orders;
-  }
+  // static List<Order> orderList(Map<String, dynamic> map) {
+  //   final List<Order> orders = [];
+  //   map.forEach((key, value) {
+  //     final tempClient = Order.fromMap(value);
+  //     tempClient.id = key;
+  //     orders.add(tempClient);
+  //   });
+  //   return orders;
+  // }
 
   Client copy() => Client(
         id: id,

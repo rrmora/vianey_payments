@@ -94,6 +94,7 @@ class _ClientScreenState extends StatelessWidget {
                           TextFormField(
                             initialValue: client.lastname,
                             autocorrect: false,
+                            onChanged: (value) => clientF?.lastname = value,
                             keyboardType: TextInputType.text,
                             decoration: InputControl.authInputDecoration(
                                 hintText: 'Apellido',
@@ -104,6 +105,7 @@ class _ClientScreenState extends StatelessWidget {
                           TextFormField(
                             initialValue: client.address,
                             autocorrect: false,
+                            onChanged: (value) => clientF?.address = value,
                             keyboardType: TextInputType.text,
                             decoration: InputControl.authInputDecoration(
                                 hintText: 'Dirección',
@@ -154,6 +156,7 @@ class _ClientScreenState extends StatelessWidget {
                                 onPressed: () async {
                                   if (!clientForm.isValidForm()) return;
 
+                                  client.status = 'activo';
                                   createUpdate ?
                                   await clientService.save(client, true) :
                                   await clientService.update(client);

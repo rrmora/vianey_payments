@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +22,24 @@ class OrderDetailScreen extends StatelessWidget {
     String id = clientCustom.id ?? '*';
     final order = id.contains('*')
         ? Order(
+            tempId: '',
             orderDate: '',
             orderStatus: '',
             orderType: '',
             total: 0,
             comment: '',
-            isExpanded: false)
+            isExpanded: false,
+            isNewOrder: true)
         : client.orders!.isNotEmpty
-            ? client.orders?.where((element) => element.id == id).first
+            ? client.orders?.where((element) => element.tempId == id).first
             : null;
-    final title = id.contains('*') ? 'Agregar orden a: ' : 'Acualizar orden a:';
-    final titleBtn = id.contains('*') ? 'Agregar: ' : 'Acualizar';
-    final createUpdate = id.contains('*') ? true : false;
+    final orderTem = order!.copy();
+    var title = 'Agregar orden a:';
+    var titleBtn = 'Agregar: ';
+    if (!order.isNewOrder) {
+      title = 'Acualizar orden a:';
+      titleBtn = 'Acualizar';
+    }
 
     return ChangeNotifierProvider(
         create: (_) => OrderFormProvider(order),
@@ -39,9 +47,10 @@ class OrderDetailScreen extends StatelessWidget {
             client: client,
             clientService: clientsService,
             order: order,
+            orderTem: orderTem,
             title: title,
-            titleBtn: titleBtn,
-            createUpdate: createUpdate));
+            titleBtn: titleBtn
+            ));
   }
 }
 
@@ -51,16 +60,16 @@ class _OrderScreenState extends StatelessWidget {
       required this.client,
       required this.clientService,
       required this.order,
+      required this.orderTem,
       required this.title,
-      required this.titleBtn,
-      required this.createUpdate})
+      required this.titleBtn})
       : super(key: key);
   final Client client;
   final ClientsService clientService;
   final Order? order;
+  final Order? orderTem;
   final String title;
   final String titleBtn;
-  final bool createUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +79,17 @@ class _OrderScreenState extends StatelessWidget {
     var now = DateTime.now();
     var hasStatus = false;
     var hasType = false;
+    var val = false;
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.popAndPushNamed(context, 'clientDetail', arguments: client),
+            onPressed: () => { 
+              if (client.orders!.isNotEmpty) {
+                client.orders![client.orders!.indexWhere((element) => element.tempId == orderTem!.tempId)] = orderTem!
+              },
+              Navigator.popAndPushNamed(context, 'clientDetail', arguments: client)
+            },
           ),
           title: const Text('Agregar orden')
         ),
@@ -260,25 +275,33 @@ class _OrderScreenState extends StatelessWidget {
                                           const TextStyle(color: Colors.white),
                                     )),
                                 onPressed: () async {
+                                 
                                   if (!orderForm.isValidForm()) return;
-                                  if (order?.id == null) {
-                                    const index = 0;
-                                    order?.id = '${client.id}-order';
+                                  if (order!.isNewOrder && order!.tempId == "") {
+                                    order?.id = '';
+                                    order!.tempId = '${ client.id }-${ client.orders!.length + 1 }';
                                     if (!hasType) {
                                       order?.orderType = 'contado';
                                     }
                                     if (!hasStatus) {
                                       order?.orderStatus = 'pedido';
                                     }
-                                    client.balance = (client.balance + order!.total);
-                                    client.orders?.insert(index, order!);
+                                    order!.isNewOrder = false;
+                                    client.orders!.add(order!);
                                   }
-                                  createUpdate
-                                      ? await clientService.save(client, false)
-                                      : await clientService.update(client);
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.popAndPushNamed(context, 'clientDetail',
-                                      arguments: client);
+                                  if (order?.orderStatus == 'cancelado') {
+                                    val = await _showDialog(context);
+                                    if (val) {
+                                      order?.total = 0;
+                                      client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current); // .reduce((value, element) => (value.total + element.total)) as double;
+                                      // ignore: use_build_context_synchronously
+                                      saveOrUpdate(context, clientService, client);
+                                    }
+                                  } else {
+                                     client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current); // .reduce((value, element) => (value.total + element.total)) as double;
+                                     saveOrUpdate(context, clientService, client);
+                                  }
+                                  
                                 }),
                           ))
                         ],
@@ -287,4 +310,41 @@ class _OrderScreenState extends StatelessWidget {
               )
             ]));
   }
+
+}
+
+void saveOrUpdate(BuildContext context,ClientsService clientService, Client client) async {
+  client.id.contains('*') ? 
+        await clientService.save(client, false) :
+        await clientService.update(client);
+        // ignore: use_build_context_synchronously
+        Navigator.popAndPushNamed(context, 'clientDetail', arguments: client);
+}
+
+
+Future<bool> _showDialog(BuildContext context) async {
+  return await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        elevation: 6,
+        title: const Text('title'),
+        content: const Text('message'),
+        actions: [
+              MaterialButton(
+                onPressed: () { 
+                  Navigator.pop(context, false);
+                  },
+                child: const Text('Cancelar'),
+              ),
+              MaterialButton(
+                textColor: Colors.redAccent,
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: const Text('Continuar'),
+              ),
+          ]
+      );
+    });
 }
