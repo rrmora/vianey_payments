@@ -36,7 +36,7 @@ class PaymentsList extends StatelessWidget {
                   client.payments!.map<DataRow>((e) => DataRow(
                     onSelectChanged: (b) {
                       clientCustom.client = client;
-                      clientCustom.id = e.id;
+                      clientCustom.id = e.tempId;
                       Navigator.popAndPushNamed(context, 'paymentDetail', arguments: clientCustom);
                     },
                     cells: [

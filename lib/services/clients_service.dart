@@ -8,7 +8,7 @@ class ClientsService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   final String _baseUrl = 'pagos-vianey-default-rtdb.firebaseio.com';
-  final List<Client> clients = [];
+  List<Client> clients = [];
   Client? selectedClient;
 
   bool isLoading = true;
@@ -18,7 +18,7 @@ class ClientsService extends ChangeNotifier {
     loadClients();
   }
 
-  Future<List<Client>> loadClients() async {
+  Future<List<Client>?> loadClients() async {
     isLoading = true;
     notifyListeners();
 
@@ -27,7 +27,6 @@ class ClientsService extends ChangeNotifier {
     final resp = await http.get(url);
 
     final Map<String, dynamic> clientsMap = json.decode(resp.body);
-    print(clientsMap);
     clientsMap.forEach((key, value) {
       final tempClient = Client.fromMap(value);
       tempClient.id = key;
@@ -36,7 +35,7 @@ class ClientsService extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
-
+    clients.sort((a, b) => b.created.compareTo(a.created));
     return clients;
   }
 
@@ -48,15 +47,14 @@ class ClientsService extends ChangeNotifier {
       'auth': await storage.read(key: 'token') ?? ''
     });
     isSaving = true;
-    final clientJ = client.toJson();
-    print(clientJ);
-    final response = await http.post(url, body: clientJ);
+    final response = await http.post(url, body: client.toJson());
 
     final decodedData = json.decode(response.body);
 
     print(decodedData);
-    // loadClients();
-    // notifyListeners();
+    clients = [];
+    loadClients();
+    notifyListeners();
     isSaving = false;
     if ( response.statusCode != 200 && response.statusCode != 201 ) {
       print('algo salio mal');
@@ -70,15 +68,11 @@ class ClientsService extends ChangeNotifier {
       'auth': await storage.read(key: 'token') ?? ''
     });
     isSaving = true;
-    // client.orders = client.orders!.map((r) => r.toJson() ).cast<Order>().toList();
-    print(json.encode(client.toJson()));
     final response = await http.put(url, body: client.toJson());
 
     json.decode(response.body);
-
-    print(client.toJson());
     // loadClients();
-    // notifyListeners();
+    notifyListeners();
     isSaving = false;
     if ( response.statusCode != 200 && response.statusCode != 201 ) {
       print('algo salio mal');

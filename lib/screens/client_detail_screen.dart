@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
 
+import 'client_list_screen.dart';
+
 class ClientDetailScreen extends StatefulWidget {
   const ClientDetailScreen({Key? key}) : super(key: key);
 
@@ -23,13 +25,19 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     client.payments = client.payments ?? (client.payments = []);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => { 
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()))
+            },
+          ),
           title: Row(  
           mainAxisAlignment: MainAxisAlignment.start,  
           children:<Widget>[   
             Container(  
               margin: const EdgeInsets.all(1.0),  
               padding: const EdgeInsets.all(1.0),  
-              child: Text(_cutString(client.name, 11) ,style: const TextStyle(fontSize: 20.0)),  
+              child: Text(_cutString(client.name, 10) ,style: const TextStyle(fontSize: 20.0)),  
             ),  
             Container(  
               margin: const EdgeInsets.only(left: 10.0, top: 2.0),  

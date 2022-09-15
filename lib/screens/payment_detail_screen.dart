@@ -19,16 +19,22 @@ class PaymentDetailScreen extends StatelessWidget {
     String id = clientCustom.id ?? '*';
     final payment = id.contains('*') 
       ? Payment(
+              tempId: '',
+              isNewPayment: true,
               paymentDate: '',
               amountPayment: 0,
               balance: 0
        ) : client.payments!.isNotEmpty
-       ? client.payments!.where((element) => element.id == id).first : null ;
-
-    final title = id.contains('*') ? 'Agregar pago a: ' : 'Acualizar pago a:';
-    final titleBtn = id.contains('*') ? 'Agregar: ' : 'Acualizar';
+       ? client.payments!.where((element) => element.tempId == id).first : null ;
+    final paymentTemp = payment!.copy();
+    var title = 'Agregar pago a: ';
+    var titleBtn = 'Agregar: ';
     final createUpdate = id.contains('*') ? true : false;
-    payment?.balance = client.balance;
+    if (!payment.isNewPayment) {
+      title = 'Acualizar pago a:';
+      titleBtn = 'Acualizar';
+    }
+    payment.balance = client.balance;
 
     return ChangeNotifierProvider(
         create: (_) => PaymentFormProvider(payment),
@@ -36,6 +42,7 @@ class PaymentDetailScreen extends StatelessWidget {
           client: client,
           clientService: clientsService,
           payment: payment,
+          paymentTemp: paymentTemp,
           title: title,
           titleBtn: titleBtn,
           createUpdate: createUpdate
@@ -49,6 +56,7 @@ class _PaymentScreenState extends StatelessWidget {
       required this.client,
       required this.clientService,
       required this.payment,
+      required this.paymentTemp,
       required this.title,
       required this.titleBtn,
       required this.createUpdate
@@ -57,6 +65,7 @@ class _PaymentScreenState extends StatelessWidget {
   final Client client;
   final ClientsService clientService;
   final Payment? payment;
+  final Payment? paymentTemp;
   final String title;
   final String titleBtn;
   final bool createUpdate;
@@ -71,7 +80,12 @@ class _PaymentScreenState extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.popAndPushNamed(context, 'clientDetail', arguments: client),
+            onPressed: () => { 
+              if (client.payments!.isNotEmpty && paymentTemp!.tempId != "") {
+                client.payments![client.payments!.indexWhere((element) => element.tempId == paymentTemp!.tempId)] = paymentTemp!
+              },
+              Navigator.popAndPushNamed(context, 'clientDetail', arguments: client)
+            },
           ),
          title: const Text('Agregar pago')),
         body: ListView(
@@ -202,12 +216,20 @@ class _PaymentScreenState extends StatelessWidget {
                                     )),
                                 onPressed: () async {
                                   if (!paymentForm.isValidForm()) return;
-                                  if (payment?.id == null) {
-                                    var index = ((client.payments?.length)!);
-                                    payment?.id = '${client.id}-payment';
+
+                                  if (payment!.isNewPayment && payment!.tempId == "") {
+                                    payment?.id = '';
+                                    payment?.tempId = '${client.id}-${client.payments!.length + 1}';
+
                                     client.balance = (client.balance - payment!.amountPayment);
                                     payment!.balance = client.balance;
-                                    client.payments?.insert(index, payment!);
+                                    payment!.isNewPayment = false;
+                                    client.payments!.add(payment!);
+                                  } else {
+                                    if (payment!.amountPayment != paymentTemp!.amountPayment) {
+                                      client.balance = (client.balance - payment!.amountPayment);
+                                      payment!.balance = client.balance;
+                                    }
                                   }
                                   client.id.contains('*')
                                       ? await clientService.save(client, false)

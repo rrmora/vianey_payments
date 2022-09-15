@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -85,7 +83,7 @@ class _OrderScreenState extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => { 
-              if (client.orders!.isNotEmpty) {
+              if (client.orders!.isNotEmpty && orderTem!.tempId != "") {
                 client.orders![client.orders!.indexWhere((element) => element.tempId == orderTem!.tempId)] = orderTem!
               },
               Navigator.popAndPushNamed(context, 'clientDetail', arguments: client)
@@ -275,6 +273,15 @@ class _OrderScreenState extends StatelessWidget {
                                           const TextStyle(color: Colors.white),
                                     )),
                                 onPressed: () async {
+                                  var paymentsAux = 0.0;
+                                  if (orderTem!.tempId != "") {
+                                    if (order!.total != orderTem!.total) {
+                                      if (client.payments!.isNotEmpty) {
+                                        paymentsAux = client.payments!.map((item) => item.amountPayment).reduce((value, current) => value + current);
+                                      }
+                                     client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current) - paymentsAux; // .reduce((value, element) => (value.total + element.total)) as double;
+                                    }
+                                  }
                                  
                                   if (!orderForm.isValidForm()) return;
                                   if (order!.isNewOrder && order!.tempId == "") {
@@ -288,20 +295,29 @@ class _OrderScreenState extends StatelessWidget {
                                     }
                                     order!.isNewOrder = false;
                                     client.orders!.add(order!);
+                                    if (client.payments!.isNotEmpty) {
+                                        paymentsAux = client.payments!.map((item) => item.amountPayment).reduce((value, current) => value + current);
+                                    }
+                                    client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current) - paymentsAux; 
                                   }
                                   if (order?.orderStatus == 'cancelado') {
-                                    val = await _showDialog(context);
-                                    if (val) {
-                                      order?.total = 0;
-                                      client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current); // .reduce((value, element) => (value.total + element.total)) as double;
-                                      // ignore: use_build_context_synchronously
-                                      saveOrUpdate(context, clientService, client);
+                                    if (order!.total > client.balance) {
+                                      var r = _showDialogAlert(context);
+                                    } else {
+                                      val = await _showDialog(context);
+                                      if (val) {
+                                        order?.total = 0;
+                                        if (client.payments!.isNotEmpty) {
+                                          paymentsAux = client.payments!.map((item) => item.amountPayment).reduce((value, current) => value + current);
+                                        }
+                                        client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current) - paymentsAux; // .reduce((value, element) => (value.total + element.total)) as double;
+                                        // ignore: use_build_context_synchronously
+                                        saveOrUpdate(context, clientService, client);
+                                      }
                                     }
                                   } else {
-                                     client.balance = client.orders!.map((item) => item.total).reduce((value, current) => value + current); // .reduce((value, element) => (value.total + element.total)) as double;
                                      saveOrUpdate(context, clientService, client);
-                                  }
-                                  
+                                  }                                  
                                 }),
                           ))
                         ],
@@ -324,26 +340,83 @@ void saveOrUpdate(BuildContext context,ClientsService clientService, Client clie
 
 Future<bool> _showDialog(BuildContext context) async {
   return await showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (context) {
       return AlertDialog(
         elevation: 6,
-        title: const Text('title'),
-        content: const Text('message'),
+        title: const Text('Advertencia.!', textAlign: TextAlign.center,),
+        content: const Text('Al seleccionar el estatus CANCELADO, el total de está orden se restará del balance total. ¿Desea continuar?', textAlign: TextAlign.justify),
         actions: [
-              MaterialButton(
-                onPressed: () { 
-                  Navigator.pop(context, false);
-                  },
-                child: const Text('Cancelar'),
-              ),
-              MaterialButton(
-                textColor: Colors.redAccent,
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text('Continuar'),
-              ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        color: Colors.red,
+                        textColor: Colors.white,
+                        onPressed: () { 
+                          Navigator.pop(context, false);
+                          },
+                        child: const Text('Cancelar'),
+                      )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        textColor: Colors.white,
+                        color: const Color.fromRGBO(118, 35, 109, 1),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('Continuar'),
+                      )
+                  ],
+                ),
+            ]
+          )
+          ]
+      );
+    });
+}
+
+
+Future<bool> _showDialogAlert(BuildContext context) async {
+  return await showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        elevation: 6,
+        title: const Text('Advertencia.!', textAlign: TextAlign.center,),
+        content: const Text('El valor total es mayor que el balance, no se puede cambiar el estatus a CANCELADO, seleccionar otro estatus.', textAlign: TextAlign.justify),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                      MaterialButton(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        textColor: Colors.white,
+                        color: const Color.fromRGBO(118, 35, 109, 1),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text('Continuar'),
+                      )
+                  ],
+                ),
+
+            ]
+          )
           ]
       );
     });

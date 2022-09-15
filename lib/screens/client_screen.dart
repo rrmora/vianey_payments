@@ -6,6 +6,8 @@ import 'package:vianey_payments/models/clients.dart';
 import 'package:vianey_payments/providers/client_form_provider.dart';
 import 'package:vianey_payments/services/clients_service.dart';
 
+import 'client_list_screen.dart';
+
 class ClientScreen extends StatelessWidget {
   const ClientScreen({Key? key}) : super(key: key);
 
@@ -43,7 +45,7 @@ class _ClientScreenState extends StatelessWidget {
             IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  Navigator.popAndPushNamed(context, 'clientsList');
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
                 })
           ],
         ),
@@ -157,12 +159,15 @@ class _ClientScreenState extends StatelessWidget {
                                   if (!clientForm.isValidForm()) return;
 
                                   client.status = 'activo';
-                                  createUpdate ?
-                                  await clientService.save(client, true) :
-                                  await clientService.update(client);
+                                  if (createUpdate) {
+                                    client.created = DateTime.now();
+                                    await clientService.save(client, true);
+                                  } else {
+                                    await clientService.update(client);
+                                  }
 
                                   // ignore: use_build_context_synchronously
-                                  Navigator.popAndPushNamed(context, 'clientsList');
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
                                 }),
                           ))
                         ],

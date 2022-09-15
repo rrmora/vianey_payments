@@ -118,7 +118,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
                                       arguments: e)
                                 },
                               ),
-                              DataCell(Text(_cutString('${e.name} ${e.lastname}', 14),
+                              DataCell(Text(_cutString('${e.name} ${e.lastname}', 11),
                                   style: const TextStyle(fontSize: 15))),
                               DataCell(Text(e.phone.toString(),
                                   style: const TextStyle(fontSize: 15))),
@@ -141,7 +141,8 @@ class _ClientListScreenState extends State<ClientListScreen> {
                 lastname: '',
                 balance: 0,
                 phone: '',
-                status: '')),
+                status: '',
+                created: DateTime.now(),)),
         tooltip: 'Increment',
         child: const Icon(Icons.add));
   }
@@ -159,7 +160,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
   }
 
   _cutString(String value, int length) {
-    var res = value.length > 11 ? '${value.substring(0, length)}...' : value;
+    var res = value.length < 11 ? value : '${value.substring(0, length)}...';
     return res;
   }
 }
