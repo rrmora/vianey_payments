@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.vianey_payments">
    <application
-        android:label="vianey_payments"
+        android:label="app-vianey-pagos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
