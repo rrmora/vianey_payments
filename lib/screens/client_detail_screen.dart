@@ -119,7 +119,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   }
 
   _cutString(String value, int length) {
-    var res = value.length > 11 ? '${value.substring(0, length)}...' : value;
+    var res = value.length < 11 ? value : '${value.substring(0, length)}...';
     return res;
   }
 }
