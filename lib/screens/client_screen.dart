@@ -42,11 +42,11 @@ class _ClientScreenState extends StatelessWidget {
         appBar: AppBar(
           title: Text(titleHeader),
           actions: [
-            IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
-                })
+            // IconButton(
+            //     icon: const Icon(Icons.arrow_back),
+            //     onPressed: () {
+            //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
+            //     })
           ],
         ),
         body: ListView(

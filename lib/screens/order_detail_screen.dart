@@ -33,7 +33,7 @@ class OrderDetailScreen extends StatelessWidget {
             : null;
     final orderTem = order!.copy();
     var title = 'Agregar orden a:';
-    var titleBtn = 'Agregar: ';
+    var titleBtn = 'Agregar';
     if (!order.isNewOrder) {
       title = 'Acualizar orden a:';
       titleBtn = 'Acualizar';

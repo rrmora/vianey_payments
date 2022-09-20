@@ -28,7 +28,7 @@ class PaymentDetailScreen extends StatelessWidget {
        ? client.payments!.where((element) => element.tempId == id).first : null ;
     final paymentTemp = payment!.copy();
     var title = 'Agregar pago a: ';
-    var titleBtn = 'Agregar: ';
+    var titleBtn = 'Agregar';
     final createUpdate = id.contains('*') ? true : false;
     if (!payment.isNewPayment) {
       title = 'Acualizar pago a:';

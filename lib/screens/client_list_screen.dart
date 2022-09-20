@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vianey_payments/models/models.dart';
-import 'package:vianey_payments/services/clients_service.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+
+import '../services/services.dart';
 
 class ClientListScreen extends StatefulWidget {
   const ClientListScreen({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
   @override
   Widget build(BuildContext context) {
     final clientsService = Provider.of<ClientsService>(context);
+    final loginService = Provider.of<AuthService>(context);
 
     if (clientsService.isLoading) return const Loading();
     clientsList = clientsService.clients;
@@ -41,6 +43,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
+              loginService.logout();
               Navigator.popAndPushNamed(context, 'login');
             },
           ),

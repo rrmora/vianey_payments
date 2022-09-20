@@ -26,7 +26,7 @@ class ClientsService extends ChangeNotifier {
         {'auth': await storage.read(key: 'token') ?? ''});
     final resp = await http.get(url);
 
-    final Map<String, dynamic> clientsMap = json.decode(resp.body);
+    final Map<String, dynamic> clientsMap = json.decode(resp.body) == null ? {} : json.decode(resp.body);
     clientsMap.forEach((key, value) {
       final tempClient = Client.fromMap(value);
       tempClient.id = key;
