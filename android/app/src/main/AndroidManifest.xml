@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.vianey_payments">
+    package="com.rrmora.vianey_payments">
    <application
         android:label="app-vianey-pagos"
         android:name="${applicationName}"
