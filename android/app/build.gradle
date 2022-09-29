@@ -32,7 +32,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
    }
 
    android {
-        compileSdkVersion flutter.compileSdkVersion
+        compileSdkVersion 32
         ndkVersion flutter.ndkVersion
 
         compileOptions {
@@ -55,8 +55,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
             // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
             minSdkVersion 21
             targetSdkVersion 31
-            versionCode 1
-            versionName "1.0.0"
+            versionCode 6
+            versionName "1.0.5"
         }
 
         signingConfigs {
@@ -81,4 +81,6 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:30.4.0')
+    implementation 'com.google.firebase:firebase-database-ktx'
 }

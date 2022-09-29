@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "910491567944",
+    "firebase_url": "https://pagos-vianey-default-rtdb.firebaseio.com",
+    "project_id": "pagos-vianey",
+    "storage_bucket": "pagos-vianey.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910491567944:android:c000a57f82795d3e3a557d",
+        "android_client_info": {
+          "package_name": "com.rrmora.vianey_payments"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "910491567944-6cg00fm1t4smsc3h3auv3d1rfij8agt5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rrmora.vianey_payments",
+            "certificate_hash": "fc926bd27641a37c28a77b898a30c51796fbfaea"
+          }
+        },
+        {
+          "client_id": "910491567944-ht32t0b31v87s2cm1l1rq2l4p0k6j37g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI1dEvO3pavMuifnkMAF4kGO8IMZsGRTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "910491567944-ht32t0b31v87s2cm1l1rq2l4p0k6j37g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
