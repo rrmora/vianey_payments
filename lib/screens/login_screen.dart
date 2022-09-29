@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vianey_payments/controls/input_control.dart';
 import 'package:vianey_payments/widgets/widgets.dart';
 
+import '../models/models.dart';
 import '../services/notification_service.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -52,6 +53,7 @@ class _LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginForm = Provider.of<LoginFormProvider>(context);
+    final clientTem = ClientReset();
 
     return Form(
       key: loginForm.formKey,
@@ -115,8 +117,10 @@ class _LoginForm extends StatelessWidget {
                       final String? errorMessage = await authService.login(
                           loginForm.email, loginForm.password);
                       if (errorMessage == null) {
+                        clientTem.reset = false;
+                        clientTem.client = null;
                         // ignore: use_build_context_synchronously
-                        Navigator.pushReplacementNamed(context, 'clientsList');
+                        Navigator.pushReplacementNamed(context, 'clientsList', arguments: clientTem);
                       } else {
                         NotificationService.showSnackbar(errorMessage);
                         loginForm.isLoading = false;

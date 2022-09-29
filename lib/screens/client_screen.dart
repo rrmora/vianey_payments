@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vianey_payments/controls/input_control.dart';
 import 'package:vianey_payments/models/clients.dart';
+import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/providers/client_form_provider.dart';
 import 'package:vianey_payments/services/clients_service.dart';
 
@@ -34,19 +35,27 @@ class _ClientScreenState extends StatelessWidget {
     final clientF = clientForm.client;
 
     final client = ModalRoute.of(context)!.settings.arguments as Client;
+    final clientAux = ClientReset();
+    final clientCopy = client.copy();
     final titleHeader =
         client.id.contains('*') ? 'Agregar cliente' : 'Actualizar cliente';
     final titleBtn = client.id.contains('*') ? 'Agregar' : 'Actualizar';
     final createUpdate = client.id.contains('*') ? true : false;
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(titleHeader),
           actions: [
-            // IconButton(
-            //     icon: const Icon(Icons.arrow_back),
-            //     onPressed: () {
-            //       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
-            //     })
+            IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  clientAux.reset = client.id.contains('*') ? false : true;
+                  clientAux.client = null;
+                  if (clientAux.reset! && clientAux.reset! == true) {
+                    clientAux.client = clientCopy;  
+                  }
+                  Navigator.popAndPushNamed(context, 'clientsList', arguments: clientAux);
+                })
           ],
         ),
         body: ListView(
@@ -165,9 +174,9 @@ class _ClientScreenState extends StatelessWidget {
                                   } else {
                                     await clientService.update(client);
                                   }
-
+                                  clientAux.reset = false;
                                   // ignore: use_build_context_synchronously
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()));
+                                  Navigator.popAndPushNamed(context, 'clientsList', arguments: clientAux);
                                 }),
                           ))
                         ],

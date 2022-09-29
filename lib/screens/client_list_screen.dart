@@ -28,6 +28,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clientReset = ModalRoute.of(context)!.settings.arguments as ClientReset;
     final clientsService = Provider.of<ClientsService>(context);
     final loginService = Provider.of<AuthService>(context);
 
@@ -37,6 +38,12 @@ class _ClientListScreenState extends State<ClientListScreen> {
       auxClients = clientsList;
     }
     cont++;
+
+    if (clientReset.reset! && clientReset.client != null) {
+      var clientId = clientReset.client!.id;
+      int index = clientsList.indexWhere((element) => element.id == clientId);
+      clientsList[index] = clientReset.client!;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -108,9 +115,10 @@ class _ClientListScreenState extends State<ClientListScreen> {
                 ],
                 rows: auxClients
                     .map<DataRow>((e) => DataRow(
-                            onSelectChanged: (b) {
+                            onSelectChanged: (b) {                              
+                              var clientTemp = e.copy();
                               Navigator.pushNamed(context, 'clientDetail',
-                                  arguments: e);
+                                  arguments: { e, clientTemp });
                             },
                             cells: [
                               DataCell(
@@ -137,7 +145,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
 
   _floatingActionButton(context) {
     return FloatingActionButton(
-        onPressed: () => Navigator.popAndPushNamed(context, 'client',
+        onPressed: () => Navigator.pushNamed(context, 'client',
             arguments: Client(
                 id: '*',
                 name: '',
