@@ -115,10 +115,9 @@ class _ClientListScreenState extends State<ClientListScreen> {
                 ],
                 rows: auxClients
                     .map<DataRow>((e) => DataRow(
-                            onSelectChanged: (b) {                              
-                              var clientTemp = e.copy();
+                            onSelectChanged: (b) {
                               Navigator.pushNamed(context, 'clientDetail',
-                                  arguments: { e, clientTemp });
+                                  arguments: e);
                             },
                             cells: [
                               DataCell(

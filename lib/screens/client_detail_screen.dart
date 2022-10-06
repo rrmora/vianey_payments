@@ -21,6 +21,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final client = ModalRoute.of(context)!.settings.arguments as Client;
+    final clientAux = ClientReset();
     client.orders = client.orders ?? (client.orders = []);
     client.payments = client.payments ?? (client.payments = []);
     return Scaffold(
@@ -28,7 +29,8 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => { 
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ClientListScreen()))
+              clientAux.reset = false,
+              Navigator.popAndPushNamed(context, 'clientsList', arguments: clientAux)
             },
           ),
           title: Row(  

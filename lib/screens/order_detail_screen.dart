@@ -302,7 +302,7 @@ class _OrderScreenState extends StatelessWidget {
                                   }
                                   if (order?.orderStatus == 'cancelado') {
                                     if (order!.total > client.balance) {
-                                      var r = _showDialogAlert(context);
+                                      _showDialogAlert(context);
                                     } else {
                                       val = await _showDialog(context);
                                       if (val) {

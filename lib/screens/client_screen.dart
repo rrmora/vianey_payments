@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vianey_payments/controls/input_control.dart';
-import 'package:vianey_payments/models/clients.dart';
 import 'package:vianey_payments/models/models.dart';
 import 'package:vianey_payments/providers/client_form_provider.dart';
 import 'package:vianey_payments/services/clients_service.dart';
-
-import 'client_list_screen.dart';
 
 class ClientScreen extends StatelessWidget {
   const ClientScreen({Key? key}) : super(key: key);
